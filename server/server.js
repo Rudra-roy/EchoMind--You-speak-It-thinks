@@ -6,6 +6,7 @@ require('dotenv').config();
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -38,6 +39,7 @@ app.get('/', (req, res) => {
 
 // API Routes
 app.use('/api/auth', userRoutes);
+app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Error handler middleware (must be after routes)
@@ -63,8 +65,9 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Start server
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📱 Mobile API: http://localhost:${PORT}/api/auth`);
+const HOST = '0.0.0.0'; // Listen on all network interfaces
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
+  console.log(`📱 Mobile API: http://192.168.0.111:${PORT}/api/auth`);
   console.log(`⚙️  Admin API: http://localhost:${PORT}/api/admin`);
 });

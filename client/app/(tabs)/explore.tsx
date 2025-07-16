@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -7,10 +7,20 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+// import { useTheme } from '@/contexts/ThemeContext';
+// import ThemeToggle from '@/components/ThemeToggle';
 
 export default function TabTwoScreen() {
+  // const { theme } = useTheme();
+  
   return (
-    <ParallaxScrollView
+    <View style={{ flex: 1 }}>
+      {/* Theme Toggle - Temporarily disabled */}
+      {/* <View style={styles.themeToggleContainer}>
+        <ThemeToggle size="small" />
+      </View> */}
+      
+      <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
       headerImage={
         <IconSymbol
@@ -93,6 +103,7 @@ export default function TabTwoScreen() {
         })}
       </Collapsible>
     </ParallaxScrollView>
+    </View>
   );
 }
 
@@ -106,5 +117,11 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     gap: 8,
+  },
+  themeToggleContainer: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
+    zIndex: 1,
   },
 });
