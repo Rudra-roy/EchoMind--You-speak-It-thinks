@@ -1,4 +1,5 @@
-import React from 'react';
+import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,11 +7,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
+  Animated,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { router } from 'expo-router';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,6 +26,40 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose, currentTab }: SidebarProps) {
   const { theme, isDark } = useTheme();
   const { user, logout } = useAuth();
+  const slideAnim = useRef(new Animated.Value(-280)).current; // Start off-screen to the left
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (isOpen) {
+      // Animate in from left
+      Animated.parallel([
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      // Animate out to left
+      Animated.parallel([
+        Animated.timing(slideAnim, {
+          toValue: -280,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isOpen]);
 
   const sidebarItems = [
     {
@@ -54,17 +93,27 @@ export default function Sidebar({ isOpen, onClose, currentTab }: SidebarProps) {
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <View style={[styles.overlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+    <Animated.View style={[
+      styles.overlay, 
+      { 
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        opacity: opacityAnim,
+      }
+    ]} pointerEvents={isOpen ? 'auto' : 'none'}>
       <TouchableOpacity 
         style={styles.overlayTouchable} 
         onPress={onClose}
         activeOpacity={1}
       />
       
-      <View style={[styles.sidebar, { backgroundColor: theme.surface }]}>
+      <Animated.View style={[
+        styles.sidebar, 
+        { 
+          backgroundColor: theme.surface,
+          transform: [{ translateX: slideAnim }],
+        }
+      ]}>
         {/* Header */}
         <View style={[styles.header, { borderBottomColor: theme.border }]}>
           <View style={styles.headerContent}>
@@ -125,8 +174,8 @@ export default function Sidebar({ isOpen, onClose, currentTab }: SidebarProps) {
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </View>
+      </Animated.View>
+    </Animated.View>
   );
 }
 
@@ -144,6 +193,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sidebar: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
     width: 280,
     height: '100%',
     shadowColor: '#000',
