@@ -72,7 +72,7 @@ export default function HistoryScreen() {
     // Set the selected session in context and navigate to chat
     setSelectedSessionId(session._id);
     setShouldLoadSpecificSession(true);
-    router.push('/' as any);
+    router.push('/(tabs)');
   };
 
   const handleDeleteSession = async (session: ChatSession) => {

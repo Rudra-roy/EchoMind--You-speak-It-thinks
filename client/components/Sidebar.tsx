@@ -66,7 +66,7 @@ export default function Sidebar({ isOpen, onClose, currentTab }: SidebarProps) {
       id: 'chat',
       label: 'Chat',
       icon: 'chatbubble-outline',
-      route: '/(tabs)/index',
+      route: '/(tabs)',
     },
     {
       id: 'history',
