@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import * as React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,12 +16,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useChat } from '@/contexts/ChatContext';
 import Sidebar from '@/components/Sidebar';
 import chatService, { ChatSession, Message } from '@/services/chatService';
 
 export default function ChatScreen() {
   const { theme, isDark } = useTheme();
   const { user } = useAuth();
+  const { selectedSessionId, shouldLoadSpecificSession, setShouldLoadSpecificSession } = useChat();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -35,6 +38,14 @@ export default function ChatScreen() {
   useEffect(() => {
     initializeChat();
   }, [user]);
+
+  // Handle specific session loading from history
+  useEffect(() => {
+    if (shouldLoadSpecificSession && selectedSessionId) {
+      loadSpecificSession(selectedSessionId);
+      setShouldLoadSpecificSession(false);
+    }
+  }, [shouldLoadSpecificSession, selectedSessionId]);
 
   const initializeChat = async () => {
     try {
@@ -57,6 +68,34 @@ export default function ChatScreen() {
     } catch (error) {
       console.error('Error initializing chat:', error);
       Alert.alert('Error', 'Failed to initialize chat. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadSpecificSession = async (sessionId: string) => {
+    try {
+      setLoading(true);
+      const sessionData = await chatService.getSession(sessionId);
+      setCurrentSession(sessionData.session);
+      setMessages(sessionData.messages);
+    } catch (error) {
+      console.error('Error loading specific session:', error);
+      Alert.alert('Error', 'Failed to load conversation. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createNewChat = async () => {
+    try {
+      setLoading(true);
+      const newSession = await chatService.createSession();
+      setCurrentSession(newSession);
+      setMessages([]);
+    } catch (error) {
+      console.error('Error creating new chat:', error);
+      Alert.alert('Error', 'Failed to create new chat. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -191,8 +230,11 @@ export default function ChatScreen() {
           </Text>
         </View>
         
-        <TouchableOpacity style={styles.optionsButton}>
-          <Ionicons name="ellipsis-vertical" size={24} color={theme.text} />
+        <TouchableOpacity 
+          style={styles.optionsButton}
+          onPress={createNewChat}
+        >
+          <Ionicons name="add" size={24} color={theme.text} />
         </TouchableOpacity>
       </View>
 
