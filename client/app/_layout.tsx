@@ -1,14 +1,16 @@
+import * as React from 'react';
+import { useEffect } from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
 import { router } from 'expo-router';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { ThemeProvider as CustomThemeProvider, useTheme } from '@/contexts/ThemeContext';
+import { ChatProvider } from '@/contexts/ChatContext';
 
 function RootLayoutNav() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -48,7 +50,9 @@ export default function RootLayout() {
   return (
     <CustomThemeProvider>
       <AuthProvider>
-        <RootLayoutNav />
+        <ChatProvider>
+          <RootLayoutNav />
+        </ChatProvider>
       </AuthProvider>
     </CustomThemeProvider>
   );
