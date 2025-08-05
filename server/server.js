@@ -2,12 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
+const path = require('path');
 require('dotenv').config();
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 // Import models
@@ -22,6 +24,9 @@ app.set('trust proxy', true);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cors());
+
+// Serve static files (for uploaded images)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Logging middleware
 if (process.env.NODE_ENV === 'development') {
@@ -41,6 +46,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', userRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Error handler middleware (must be after routes)
 app.use(errorHandler);
