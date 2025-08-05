@@ -3,6 +3,7 @@ const router = express.Router();
 const ChatSession = require('../models/ChatSession');
 const Message = require('../models/Message');
 const { protect } = require('../middleware/auth');
+const aiService = require('../services/aiService');
 
 // @route   GET /api/chat/sessions
 // @desc    Get all chat sessions for the authenticated user
@@ -139,16 +140,49 @@ router.post('/sessions/:id/messages', protect, async (req, res) => {
     session.messageCount += 1;
     await session.updateActivity();
 
-    // Generate AI response (placeholder for now)
+    // Generate AI response using our AI service
+    let aiResponseContent = "I'm sorry, I'm currently offline. Please try again later.";
+    let aiModel = 'offline';
+    let processingTime = 0;
+
+    try {
+      const startTime = Date.now();
+      
+      // Get conversation context for better AI responses
+      const recentMessages = await Message.find({ session: req.params.id })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .select('content isUserMessage');
+
+      const context = recentMessages.reverse().map(msg => ({
+        role: msg.isUserMessage ? 'user' : 'assistant',
+        content: msg.content
+      }));
+
+      // Generate AI response
+      const aiResult = await aiService.generateTextResponse(content.trim(), context);
+      
+      if (aiResult.success) {
+        aiResponseContent = aiResult.content;
+        aiModel = aiResult.model;
+        processingTime = Date.now() - startTime;
+      } else {
+        console.warn('AI service unavailable:', aiResult.error);
+        aiResponseContent = aiResult.content; // This will be the fallback message
+      }
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+    }
+
     const aiResponse = new Message({
       session: req.params.id,
       user: req.user.id,
-      content: `I received your message: "${content.trim()}". This is a placeholder AI response. Real AI integration will be implemented later.`,
+      content: aiResponseContent,
       isUserMessage: false,
       messageType: 'text',
       metadata: {
-        aiModel: 'placeholder-v1',
-        processingTime: Math.floor(Math.random() * 1000) + 500
+        aiModel: aiModel,
+        processingTime: processingTime
       }
     });
 
