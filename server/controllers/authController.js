@@ -195,10 +195,23 @@ const logout = async (req, res, next) => {
   }
 };
 
+// @desc    Test server connection
+// @route   GET /api/auth/test-connection
+// @access  Public
+const testConnection = async (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Server is running and accessible',
+    timestamp: new Date().toISOString(),
+    server: 'EchoMind Backend'
+  });
+};
+
 module.exports = {
   register,
   login,
   adminLogin,
   getMe,
-  logout
+  logout,
+  testConnection
 };

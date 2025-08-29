@@ -47,6 +47,7 @@ app.use('/api/auth', userRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/prompt-templates', require('./routes/promptTemplateRoutes'));
 
 // Error handler middleware (must be after routes)
 app.use(errorHandler);
