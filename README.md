@@ -1,6 +1,19 @@
 # EchoMind--You-speak-It-thinks
 
-**Project Overview**:
+**Project10. Custom Prompt Template Management ✅ COMPLETED
+Users can create, edit, and select from a library of prompt templates (e.g., "Explain Like I'm Five" or "Technical Deep‑Dive") to tailor the VLM's response style.
+
+**Implementation Details:**
+- Backend: Mongoose model for PromptTemplate with CRUD operations
+- REST API endpoints for template management (create, read, update, delete, duplicate, use)
+- Default system templates automatically initialized on server start
+- Frontend: PromptTemplateSelector component with category filtering and search
+- Integrated into ChatScreen with template selection button and display
+- Template usage tracked and applied to all message types (text, image, voice)
+- Secure authentication-based access to templates
+
+
+11. Session Analytics Dashboardview**:
 EchoMind is a mobile application built in React-native using a Model-View-Controller (MVC) architecture. It provides end users with a seamless interface to interact with a remote Vision‑Language Model (VLM) via image, voice, and text inputs. All heavy inference is offloaded to a backend server, ensuring a lightweight, responsive client.
 
 

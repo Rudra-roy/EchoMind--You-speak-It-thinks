@@ -21,11 +21,23 @@ export interface Message {
   user: string;
   content: string;
   isUserMessage: boolean;
-  messageType: 'text' | 'voice' | 'system';
+  messageType: 'text' | 'voice' | 'system' | 'image' | 'multimodal' | 'multimodal_response';
   metadata: {
     voiceData?: string;
+    voiceFileName?: string;
+    voiceOriginalName?: string;
+    voiceSize?: number;
+    voiceMimeType?: string;
+    voiceDuration?: number;
     processingTime?: number;
     aiModel?: string;
+    imagePath?: string;
+    imageFileName?: string;
+    imageOriginalName?: string;
+    imageSize?: number;
+    imageMimeType?: string;
+    hasImageInput?: boolean;
+    responseType?: string;
   };
   timestamp: string;
   isEdited: boolean;
@@ -89,16 +101,95 @@ class ChatService {
     }
   }
 
-  async sendMessage(sessionId: string, content: string, messageType: 'text' | 'voice' = 'text'): Promise<{ userMessage: Message; aiResponse: Message }> {
+  async sendMessage(
+    sessionId: string, 
+    content: string, 
+    promptTemplateId?: string,
+    messageType: 'text' | 'voice' = 'text'
+  ): Promise<{ userMessage: Message; aiResponse: Message }> {
     try {
       const headers = await this.getAuthHeaders();
+      const payload: any = { content, messageType };
+      if (promptTemplateId) {
+        payload.promptTemplateId = promptTemplateId;
+      }
+      
       const response = await axios.post(`${API_BASE_URL}/chat/sessions/${sessionId}/messages`, 
-        { content, messageType }, 
+        payload, 
         { headers }
       );
       return response.data.data;
     } catch (error) {
       console.error('Error sending message:', error);
+      throw error;
+    }
+  }
+
+  async sendMessageWithImage(
+    sessionId: string, 
+    content: string, 
+    imageAsset: any,
+    promptTemplateId?: string,
+    messageType: 'multimodal' | 'image' = 'multimodal'
+  ): Promise<{ userMessage: Message; aiResponse: Message }> {
+    try {
+      const headers = await this.getAuthHeaders();
+      
+      // Create FormData for multipart upload
+      const formData = new FormData();
+      formData.append('content', content);
+      formData.append('messageType', messageType);
+      if (promptTemplateId) {
+        formData.append('promptTemplateId', promptTemplateId);
+      }
+      
+      // Add image file
+      const imageFile = {
+        uri: imageAsset.uri,
+        type: imageAsset.mimeType || 'image/jpeg',
+        name: imageAsset.fileName || `image_${Date.now()}.jpg`,
+      } as any;
+      
+      formData.append('image', imageFile);
+      
+      // Update headers for multipart form data
+      const multipartHeaders = {
+        ...headers,
+        'Content-Type': 'multipart/form-data',
+      };
+      
+      const response = await axios.post(
+        `${API_BASE_URL}/chat/sessions/${sessionId}/messages`, 
+        formData,
+        { headers: multipartHeaders }
+      );
+      
+      return response.data.data;
+    } catch (error) {
+      console.error('Error sending message with image:', error);
+      throw error;
+    }
+  }
+
+  async sendMessageWithVoice(sessionId: string, formData: FormData): Promise<any> {
+    try {
+      const headers = await this.getAuthHeaders();
+      
+      // Update headers for multipart form data
+      const multipartHeaders = {
+        ...headers,
+        'Content-Type': 'multipart/form-data',
+      };
+      
+      const response = await axios.post(
+        `${API_BASE_URL}/chat/sessions/${sessionId}/messages`, 
+        formData,
+        { headers: multipartHeaders }
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error sending message with voice:', error);
       throw error;
     }
   }

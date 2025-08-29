@@ -54,3 +54,12 @@ export default {
   getWebSocketUrl,
   NETWORK_CONFIG,
 };
+
+/**
+ * API Endpoints
+ */
+export const API_ENDPOINTS = {
+  AUTH: `${getApiBaseUrl()}/auth`,
+  CHAT: `${getApiBaseUrl()}/chat`,
+  PROMPT_TEMPLATES: `${getApiBaseUrl()}/prompt-templates`
+};
