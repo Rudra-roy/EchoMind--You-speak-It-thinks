@@ -33,6 +33,16 @@ const userSchema = new mongoose.Schema({
   },
   lastLogin: {
     type: Date
+  },
+  isOnline: {
+    type: Boolean,
+    default: false
+  },
+  lastActivity: {
+    type: Date
+  },
+  sessionToken: {
+    type: String
   }
 }, {
   timestamps: true
@@ -51,6 +61,20 @@ userSchema.pre('save', async function(next) {
 // Instance method to check password
 userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Instance method to check if user is currently online (active within last 5 minutes)
+userSchema.methods.isCurrentlyOnline = function() {
+  if (!this.lastActivity) return false;
+  const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+  return this.lastActivity > fiveMinutesAgo;
+};
+
+// Instance method to update activity
+userSchema.methods.updateActivity = async function() {
+  this.lastActivity = new Date();
+  this.isOnline = true;
+  await this.save();
 };
 
 // Static method to create admin user

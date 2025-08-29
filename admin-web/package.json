@@ -1,0 +1,14 @@
+{
+  "name": "echomind-admin-web",
+  "version": "1.0.0",
+  "description": "EchoMind Admin Web Dashboard",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server . -p 3000 -o",
+    "dev": "live-server --port=3000"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  }
+}

@@ -77,8 +77,11 @@ const login = async (req, res, next) => {
       });
     }
 
-    // Update last login
+    // Update last login and online status
     user.lastLogin = Date.now();
+    user.lastActivity = Date.now();
+    user.isOnline = true;
+    user.sessionToken = generateToken(user._id);
     await user.save();
 
     // Generate token
@@ -135,8 +138,11 @@ const adminLogin = async (req, res, next) => {
       });
     }
 
-    // Update last login
+    // Update last login and online status
     user.lastLogin = Date.now();
+    user.lastActivity = Date.now();
+    user.isOnline = true;
+    user.sessionToken = generateToken(user._id);
     await user.save();
 
     // Generate token
@@ -186,6 +192,14 @@ const getMe = async (req, res, next) => {
 // @access  Private
 const logout = async (req, res, next) => {
   try {
+    // Update user's online status
+    const user = await User.findById(req.user.id);
+    if (user) {
+      user.isOnline = false;
+      user.sessionToken = null;
+      await user.save();
+    }
+
     res.status(200).json({
       success: true,
       message: 'Logged out successfully'

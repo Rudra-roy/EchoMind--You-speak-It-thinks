@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoMind Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>🛡️ EchoMind Admin</h1>
+                <p>Admin Dashboard Access</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" value="admin@echomind.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" value="admin123" required>
+                </div>
+                
+                <button type="submit" id="loginBtn">
+                    <span id="loginBtnText">Login</span>
+                    <div id="loginSpinner" class="spinner hidden"></div>
+                </button>
+                
+                <div id="loginError" class="error hidden"></div>
+                
+                <div class="credentials-hint">
+                    <small>
+                        <strong>Default Credentials:</strong><br>
+                        Email: admin@echomind.com<br>
+                        Password: admin123
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="screen hidden">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>🛡️ EchoMind Admin Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <span id="adminName">Admin User</span>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <!-- Statistics Cards -->
+            <section class="stats-section">
+                <h2>Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalUsers">-</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeUsers">-</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-card online-users">
+                        <div class="stat-number" id="onlineUsers">-</div>
+                        <div class="stat-label">Online Now</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalConversations">-</div>
+                        <div class="stat-label">Conversations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="recentUsers">-</div>
+                        <div class="stat-label">New Users (30d)</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Management -->
+            <section class="users-section">
+                <div class="section-header">
+                    <h2>User Management</h2>
+                    <button id="addUserBtn" class="btn btn-primary">+ Add User</button>
+                </div>
+
+                <div class="users-controls">
+                    <input type="text" id="searchUsers" placeholder="Search users by name or email..." class="search-input">
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-status="">All</button>
+                        <button class="filter-btn" data-status="active">Active</button>
+                        <button class="filter-btn" data-status="inactive">Inactive</button>
+                    </div>
+                    <button id="refreshUsers" class="btn btn-secondary">🔄 Refresh</button>
+                </div>
+
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Online</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="7" class="loading-cell">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New User</h3>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            
+            <form id="addUserForm" class="modal-form">
+                <div class="form-group">
+                    <label for="userName">Name:</label>
+                    <input type="text" id="userName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userEmail">Email:</label>
+                    <input type="email" id="userEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userPassword">Password:</label>
+                    <input type="password" id="userPassword" required minlength="6">
+                </div>
+                
+                <div class="form-group">
+                    <label>Role:</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="userRole" value="user" checked>
+                            User
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="userRole" value="admin">
+                            Admin
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" id="cancelAddUser" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="addUserBtnText">Create User</span>
+                        <div id="addUserSpinner" class="spinner hidden"></div>
+                    </button>
+                </div>
+                
+                <div id="addUserError" class="error hidden"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner-large"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

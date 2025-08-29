@@ -14,8 +14,10 @@ router.get('/me', protect, adminOnly, authController.getMe);
 
 // User Management routes
 router.get('/users', protect, adminOnly, adminController.getAllUsers);
+router.post('/users', protect, adminOnly, adminController.addUser);
 router.get('/users/:id', protect, adminOnly, adminController.getUserById);
 router.get('/users/:id/conversations', protect, adminOnly, adminController.getUserConversations);
 router.put('/users/:id/toggle-status', protect, adminOnly, adminController.toggleUserStatus);
+router.delete('/users/:id', protect, adminOnly, adminController.deleteUser);
 
 module.exports = router;

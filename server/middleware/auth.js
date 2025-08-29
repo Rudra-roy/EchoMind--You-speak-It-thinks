@@ -39,6 +39,11 @@ const protect = async (req, res, next) => {
       });
     }
 
+    // Update user activity (for online status tracking)
+    req.user.lastActivity = new Date();
+    req.user.isOnline = true;
+    await req.user.save();
+
     next();
   } catch (error) {
     return res.status(401).json({
