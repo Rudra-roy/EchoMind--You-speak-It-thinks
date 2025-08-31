@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const Conversation = require('../models/Conversation');
+const ChatSession = require('../models/ChatSession');
 const Message = require('../models/Message');
 const bcrypt = require('bcryptjs');
 
@@ -71,7 +71,7 @@ const getUserById = async (req, res, next) => {
     }
 
     // Get user's conversation count
-    const conversationCount = await Conversation.countDocuments({ userId: user._id });
+    const conversationCount = await ChatSession.countDocuments({ user: user._id });
 
     res.status(200).json({
       success: true,
@@ -94,12 +94,12 @@ const getUserConversations = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const conversations = await Conversation.find({ userId: req.params.id })
+    const conversations = await ChatSession.find({ user: req.params.id })
       .sort({ lastActivity: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await Conversation.countDocuments({ userId: req.params.id });
+    const total = await ChatSession.countDocuments({ user: req.params.id });
 
     res.status(200).json({
       success: true,
@@ -119,44 +119,23 @@ const getUserConversations = async (req, res, next) => {
 // @access  Private/Admin
 const getDashboardStats = async (req, res, next) => {
   try {
-    // Get basic counts
-    const totalUsers = await User.countDocuments({ role: 'user' });
-    const activeUsers = await User.countDocuments({ role: 'user', isActive: true });
+    // Get total users count (including admin)
+    const totalUsers = await User.countDocuments();
     
-    // Get online users (active within last 5 minutes)
+    // Get online users (active within last 5 minutes) - including admin
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     const onlineUsers = await User.countDocuments({ 
-      role: 'user',
       lastActivity: { $gte: fiveMinutesAgo }
     });
     
-    const totalConversations = await Conversation.countDocuments();
-    
-    // Get recent registrations (last 30 days)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    const recentUsers = await User.countDocuments({
-      role: 'user',
-      createdAt: { $gte: thirtyDaysAgo }
-    });
-
-    // Get message type breakdown
-    const messageStats = await Conversation.aggregate([
-      { $unwind: '$messages' },
-      {
-        $group: {
-          _id: '$messages.type',
-          count: { $sum: 1 }
-        }
-      }
-    ]);
+    // Get total chat sessions (conversations)
+    const totalConversations = await ChatSession.countDocuments();
 
     // Get recent activity (last 7 days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     
-    const recentActivity = await Conversation.countDocuments({
+    const recentActivity = await ChatSession.countDocuments({
       lastActivity: { $gte: sevenDaysAgo }
     });
 
@@ -164,15 +143,9 @@ const getDashboardStats = async (req, res, next) => {
       success: true,
       stats: {
         totalUsers,
-        activeUsers,
         onlineUsers,
         totalConversations,
-        recentUsers,
-        recentActivity,
-        messageTypes: messageStats.reduce((acc, item) => {
-          acc[item._id] = item.count;
-          return acc;
-        }, {})
+        recentActivity
       }
     });
   } catch (error) {
@@ -300,15 +273,15 @@ const deleteUser = async (req, res, next) => {
       });
     }
 
-    // Delete user's conversations and messages
-    const conversations = await Conversation.find({ userId: user._id });
-    const conversationIds = conversations.map(conv => conv._id);
+    // Delete user's chat sessions and messages
+    const chatSessions = await ChatSession.find({ user: user._id });
+    const sessionIds = chatSessions.map(session => session._id);
     
-    // Delete messages for these conversations
-    await Message.deleteMany({ conversationId: { $in: conversationIds } });
+    // Delete messages for these chat sessions
+    await Message.deleteMany({ session: { $in: sessionIds } });
     
-    // Delete conversations
-    await Conversation.deleteMany({ userId: user._id });
+    // Delete chat sessions
+    await ChatSession.deleteMany({ user: user._id });
     
     // Delete the user
     await User.findByIdAndDelete(req.params.id);

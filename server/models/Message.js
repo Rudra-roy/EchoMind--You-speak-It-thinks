@@ -15,7 +15,7 @@ const messageSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    maxlength: 5000
+    maxlength: 20000 // Increased limit for longer AI responses
   },
   isUserMessage: {
     type: Boolean,

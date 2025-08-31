@@ -21,9 +21,24 @@ const app = express();
 app.set('trust proxy', true);
 
 // Middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(cors());
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+
+// Configure CORS to allow admin dashboard
+app.use(cors({
+  origin: [
+    'http://localhost:3000', // Admin web dashboard
+    'http://127.0.0.1:3000', // Alternative localhost
+    'http://192.168.0.111:3000', // Admin dashboard on network IP
+    'http://localhost:3001', // Backup port
+    'http://127.0.0.1:3001', // Alternative localhost backup
+    'http://192.168.0.111:8000', // Mobile client same network
+    'http://localhost:8000' // Same origin
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Serve static files (for uploaded images)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
