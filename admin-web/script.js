@@ -20,10 +20,9 @@ const adminName = document.getElementById('adminName');
 
 // Stats elements
 const totalUsers = document.getElementById('totalUsers');
-const activeUsers = document.getElementById('activeUsers');
 const onlineUsers = document.getElementById('onlineUsers');
 const totalConversations = document.getElementById('totalConversations');
-const recentUsers = document.getElementById('recentUsers');
+const recentActivity = document.getElementById('recentActivity');
 
 // User management elements
 const searchUsers = document.getElementById('searchUsers');
@@ -135,10 +134,9 @@ function showDashboardScreen() {
 
 function updateStats(stats) {
     totalUsers.textContent = stats.totalUsers;
-    activeUsers.textContent = stats.activeUsers;
     onlineUsers.textContent = stats.onlineUsers || 0;
     totalConversations.textContent = stats.totalConversations;
-    recentUsers.textContent = stats.recentUsers;
+    recentActivity.textContent = stats.recentActivity || 0;
 }
 
 function renderUsers(users) {
@@ -304,6 +302,11 @@ window.toggleStatus = async function(userId, isActive) {
         try {
             const result = await toggleUserStatus(userId);
             if (result.success) {
+                // Refresh both stats and user list
+                const statsResult = await getDashboardStats();
+                if (statsResult.success) {
+                    updateStats(statsResult.stats);
+                }
                 await loadUsers();
                 alert(result.message);
             } else {
@@ -323,6 +326,11 @@ window.confirmDeleteUser = async function(userId, userName) {
         try {
             const result = await deleteUser(userId);
             if (result.success) {
+                // Refresh both stats and user list
+                const statsResult = await getDashboardStats();
+                if (statsResult.success) {
+                    updateStats(statsResult.stats);
+                }
                 await loadUsers();
                 alert('User deleted successfully');
             } else {
@@ -368,7 +376,7 @@ async function loadUsers() {
     try {
         usersTableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="loading-cell">Loading users...</td>
+                <td colspan="7" class="loading-cell">Loading users...</td>
             </tr>
         `;
         
