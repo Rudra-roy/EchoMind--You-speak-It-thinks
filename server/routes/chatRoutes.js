@@ -203,19 +203,19 @@ router.post('/sessions/:id/messages', protect, upload.fields([
       // If no text content provided, try to transcribe the voice message
       if (!userMessageContent) {
         try {
-          console.log('🎤 Attempting to transcribe voice message:', voiceFile.filename);
+          console.log('Attempting to transcribe voice message:', voiceFile.filename);
           const transcriptionResult = await aiService.transcribeAudio(voiceFile.path);
           
           if (transcriptionResult.success && transcriptionResult.transcription) {
             userMessageContent = transcriptionResult.transcription;
-            console.log('✅ Voice transcription successful:', userMessageContent);
+            console.log('Voice transcription successful:', userMessageContent);
           } else {
-            console.log('⚠️ Voice transcription failed, using placeholder');
-            userMessageContent = '[🎤 Voice message - click to play]';
+            console.log('Voice transcription failed, using placeholder');
+            userMessageContent = '[Voice message - click to play]';
           }
         } catch (error) {
-          console.error('❌ Voice transcription error:', error);
-          userMessageContent = '[🎤 Voice message - transcription failed]';
+          console.error('Voice transcription error:', error);
+          userMessageContent = '[Voice message - transcription failed]';
         }
       }
     }
@@ -232,7 +232,7 @@ router.post('/sessions/:id/messages', protect, upload.fields([
           voiceDuration = transcriptionResult.audioInfo.duration;
         }
       } catch (error) {
-        console.log('⚠️ Could not extract voice duration:', error.message);
+        console.log('Could not extract voice duration:', error.message);
       }
     }
     
@@ -303,12 +303,12 @@ router.post('/sessions/:id/messages', protect, upload.fields([
           if (promptTemplate) {
             // Increment usage count
             await promptTemplate.incrementUsage();
-            console.log('🎯 Using prompt template:', promptTemplate.name);
+            console.log('Using prompt template:', promptTemplate.name);
           } else {
-            console.warn('⚠️ Prompt template not found or not accessible:', promptTemplateId);
+            console.warn('Prompt template not found or not accessible:', promptTemplateId);
           }
         } catch (error) {
-          console.error('❌ Error fetching prompt template:', error.message);
+          console.error('Error fetching prompt template:', error.message);
         }
       }
 

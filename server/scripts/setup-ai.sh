@@ -3,7 +3,7 @@
 # EchoMind AI Setup Script
 # This script helps set up Ollama with LLaVA for local AI integration
 
-echo "🚀 EchoMind AI Setup Script"
+echo "EchoMind AI Setup Script"
 echo "========================================="
 echo ""
 
@@ -33,11 +33,11 @@ echo ""
 # Step 1: Check if Ollama is installed
 echo "Step 1: Checking Ollama installation..."
 if command_exists ollama; then
-    echo "✅ Ollama is already installed"
+    echo "Ollama is already installed"
     OLLAMA_VERSION=$(ollama --version 2>/dev/null || echo "unknown")
     echo "   Version: $OLLAMA_VERSION"
 else
-    echo "❌ Ollama is not installed"
+    echo "Ollama is not installed"
     echo ""
     echo "Please install Ollama first:"
     
@@ -62,9 +62,9 @@ echo ""
 # Step 2: Check if Ollama service is running
 echo "Step 2: Checking Ollama service..."
 if check_ollama_running; then
-    echo "✅ Ollama service is running"
+    echo "Ollama service is running"
 else
-    echo "❌ Ollama service is not running"
+    echo "Ollama service is not running"
     echo ""
     echo "Starting Ollama service..."
     
@@ -79,9 +79,9 @@ else
         sleep 5
         
         if check_ollama_running; then
-            echo "✅ Ollama service started successfully"
+            echo "Ollama service started successfully"
         else
-            echo "❌ Failed to start Ollama service"
+            echo "Failed to start Ollama service"
             echo "   Please start manually: ollama serve"
             exit 1
         fi
@@ -99,11 +99,11 @@ echo "Step 3: Checking available models..."
 MODELS=$(curl -s http://localhost:11434/api/tags 2>/dev/null | grep -o '"name":"[^"]*"' | cut -d'"' -f4)
 
 if echo "$MODELS" | grep -q "llava"; then
-    echo "✅ LLaVA model is available"
+    echo "LLaVA model is available"
     echo "   Found models with 'llava':"
     echo "$MODELS" | grep llava | sed 's/^/   - /'
 else
-    echo "❌ LLaVA model not found"
+    echo "LLaVA model not found"
     echo ""
     echo "Available models:"
     if [ -n "$MODELS" ]; then
@@ -118,9 +118,9 @@ else
     ollama pull llava:7b
     
     if [ $? -eq 0 ]; then
-        echo "✅ LLaVA model installed successfully"
+        echo "LLaVA model installed successfully"
     else
-        echo "❌ Failed to install LLaVA model"
+        echo "Failed to install LLaVA model"
         echo "   Please try manually: ollama pull llava:7b"
         exit 1
     fi
@@ -137,10 +137,10 @@ TEST_RESPONSE=$(curl -s -X POST http://localhost:11434/api/generate -d '{
 }' | grep -o '"response":"[^"]*"' | cut -d'"' -f4)
 
 if [ -n "$TEST_RESPONSE" ] && [ "$TEST_RESPONSE" != "null" ]; then
-    echo "✅ LLaVA model is working"
+    echo "LLaVA model is working"
     echo "   Test response: $TEST_RESPONSE"
 else
-    echo "❌ LLaVA model test failed"
+    echo "LLaVA model test failed"
     echo "   Please check the model installation"
 fi
 
@@ -195,7 +195,7 @@ echo "   2. Update OLLAMA_MODEL in .env file"
 echo "   3. Restart server"
 echo ""
 
-echo "🎉 Setup complete! Your local AI is ready to use."
+echo "Setup complete! Your local AI is ready to use."
 echo ""
 echo "Need help? Check the README or visit:"
 echo "   - Ollama: https://ollama.ai/"

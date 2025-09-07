@@ -1,4 +1,6 @@
-# EchoMind--You-speak-It2. Admin Panel & Dashboard ✅ COMPLETED
+# EchoMind--You-speak-It-thinks
+
+2. Admin Panel & Dashboard COMPLETED
 A web‑based admin interface lets authorized staff view, search, and filter user profiles, registration dates, and basic usage statistics. Admins can drill down into each user's full prompt‑and‑response history to monitor activity and troubleshoot issues.
 
 **Implementation Details:**
@@ -8,9 +10,9 @@ A web‑based admin interface lets authorized staff view, search, and filter use
 - User management: Add users, delete users (with cascade deletion of conversations/messages), toggle user status
 - Security: JWT-based authentication with admin-only middleware protection
 - Frontend: AdminDashboard component with user management interface, search, filtering, and modal forms
-- API endpoints: `/api/admin/login`, `/api/admin/users`, `/api/admin/dashboard`hinks
+- API endpoints: `/api/admin/login`, `/api/admin/users`, `/api/admin/dashboard`
 
-**Project10. Custom Prompt Template Management ✅ COMPLETED
+**Project 10. Custom Prompt Template Management COMPLETED
 Users can create, edit, and select from a library of prompt templates (e.g., "Explain Like I'm Five" or "Technical Deep‑Dive") to tailor the VLM's response style.
 
 **Implementation Details:**

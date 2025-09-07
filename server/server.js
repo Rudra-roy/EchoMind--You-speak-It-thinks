@@ -78,18 +78,18 @@ app.use((req, res) => {
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(async () => {
-    console.log('✅ MongoDB connected');
+    console.log('MongoDB connected');
     
     // Create admin user if it doesn't exist
     await User.createAdminUser();
   })
-  .catch((err) => console.error('❌ MongoDB error:', err));
+  .catch((err) => console.error('MongoDB error:', err));
 
 // Start server
 const PORT = process.env.PORT || 8000;
 const HOST = '0.0.0.0'; // Listen on all network interfaces
 app.listen(PORT, HOST, () => {
-  console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
-  console.log(`📱 Mobile API: http://192.168.0.111:${PORT}/api/auth`);
-  console.log(`⚙️  Admin API: http://localhost:${PORT}/api/admin`);
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
+  console.log(`Mobile API: http://192l.168.0.111${PORT}/api/auth`);
+  console.log(`Admin API: http://localhost:${PORT}/api/admin`);
 });

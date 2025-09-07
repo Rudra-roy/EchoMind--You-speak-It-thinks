@@ -88,7 +88,7 @@ userSchema.statics.createAdminUser = async function() {
       password: process.env.ADMIN_PASSWORD,
       role: 'admin'
     });
-    console.log('✅ Admin user created');
+    console.log('Admin user created');
   }
 };
 

@@ -8,6 +8,8 @@ import { Platform } from 'react-native';
 export const NETWORK_CONFIG = {
   // Your computer's local IP address - update this when your IP changes
   LOCAL_IP: '192.168.0.111', // Updated to match current IP
+  // LOCAL_IP: '10.217.194.62', // Updated to match current IP
+
   
   // Server port
   SERVER_PORT: 8000,

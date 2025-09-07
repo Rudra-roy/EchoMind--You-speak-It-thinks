@@ -14,9 +14,9 @@ let whisper = null;
   try {
     await execAsync('whisper --help', { timeout: 5000 });
     whisper = true;
-    console.log('✅ Whisper CLI available for speech-to-text');
+    console.log('Whisper CLI available for speech-to-text');
   } catch (error) {
-    console.log('⚠️ Whisper CLI not available:', error.message);
+    console.log('Whisper CLI not available:', error.message);
   }
 })();
 
@@ -43,13 +43,13 @@ class AIService {
           apiKey: apiKey,
           projectId: process.env.GOOGLE_CLOUD_PROJECT_ID || 'echomind-speech'
         });
-        console.log('✅ Speech-to-Text client initialized with API key');
+        console.log('Speech-to-Text client initialized with API key');
       } catch (error) {
-        console.log('⚠️ Speech-to-Text client initialization failed:', error.message);
+        console.log('Speech-to-Text client initialization failed:', error.message);
         this.speechClient = null;
       }
     } else {
-      console.log('⚠️ No Google API key found for Speech-to-Text');
+      console.log('No Google API key found for Speech-to-Text');
       this.speechClient = null;
     }
     
@@ -81,16 +81,16 @@ class AIService {
       // Test with a simple prompt
       const result = await model.generateContent("Hello");
       if (result.response) {
-        console.log('✅ Gemini API is working');
-        console.log(`🔑 Using model: ${this.geminiModel}`);
+        console.log('Gemini API is working');
+        console.log(`Using model: ${this.geminiModel}`);
         this.isGeminiAvailable = true;
       } else {
         throw new Error('No response from Gemini API');
       }
       
     } catch (error) {
-      console.log('⚠️ Gemini API not available:', error.message);
-      console.log('📋 To use Gemini API:');
+      console.log('Gemini API not available:', error.message);
+      console.log('To use Gemini API:');
       console.log('   1. Set GEMINI_API_KEY environment variable');
       console.log('   2. Make sure you have a valid Google AI API key');
       console.log('   3. Falling back to Ollama if available...');
@@ -104,14 +104,14 @@ class AIService {
   async initializeOllama() {
     try {
       await this.checkOllamaStatus();
-      console.log('✅ Ollama service is available');
+      console.log('Ollama service is available');
       this.isOllamaAvailable = true;
       
       // Check if the model is available
       await this.ensureModelAvailable();
     } catch (error) {
-      console.log('⚠️ Ollama service not available:', error.message);
-      console.log('📋 To use local AI:');
+      console.log('Ollama service not available:', error.message);
+      console.log('To use local AI:');
       console.log('   1. Install Ollama: https://ollama.ai/');
       console.log('   2. Run: ollama pull llama3.2:3b');
       console.log('   3. Run: ollama pull llama3.2-vision');
@@ -141,20 +141,20 @@ class AIService {
       );
       
       if (!textModelExists) {
-        console.log(`⚠️ Text model ${this.textModel} not found. Available models:`, 
+        console.log(`Text model ${this.textModel} not found. Available models:`, 
           models.map(m => m.name));
-        console.log(`📋 Run: ollama pull ${this.textModel}`);
+        console.log(`Run: ollama pull ${this.textModel}`);
         throw new Error(`Text model ${this.textModel} not available`);
       }
       
       if (!visionModelExists) {
-        console.log(`⚠️ Vision model ${this.visionModel} not found. Image processing will be limited.`);
-        console.log(`📋 For image support, run: ollama pull ${this.visionModel}`);
+        console.log(`Vision model ${this.visionModel} not found. Image processing will be limited.`);
+        console.log(`For image support, run: ollama pull ${this.visionModel}`);
       }
       
-      console.log(`✅ Text model ${this.textModel} is available`);
+      console.log(`Text model ${this.textModel} is available`);
       if (visionModelExists) {
-        console.log(`✅ Vision model ${this.visionModel} is available`);
+        console.log(`Vision model ${this.visionModel} is available`);
       }
     } catch (error) {
       throw new Error(`Failed to check model availability: ${error.message}`);
@@ -372,7 +372,7 @@ class AIService {
 
       const model = this.genAI.getGenerativeModel({ model: this.geminiModel });
       
-      console.log('🔍 Generating response with Gemini API...');
+      console.log('Generating response with Gemini API...');
       console.log('� Prompt:', prompt.substring(0, 100) + '...');
       
       const startTime = Date.now();
@@ -382,7 +382,7 @@ class AIService {
       const response = result.response;
       const text = response.text();
       
-      console.log('✅ Gemini API response generated in', executionTime + 'ms');
+      console.log('Gemini API response generated in', executionTime + 'ms');
       console.log('📤 Response length:', text.length);
       
       return {
@@ -392,7 +392,7 @@ class AIService {
         type: 'text'
       };
     } catch (error) {
-      console.error('❌ Error in generateGeminiTextResponse:', error.message);
+      console.error('Error in generateGeminiTextResponse:', error.message);
       return this.getFallbackResponse('text', error.message);
     }
   }
@@ -413,7 +413,7 @@ class AIService {
         throw new Error(`Image file not found: ${imagePath}`);
       }
 
-      console.log('🖼️ Processing image with Gemini API:', imagePath);
+      console.log('Processing image with Gemini API:', imagePath);
       
       // Read and encode image
       const imageBuffer = fs.readFileSync(imagePath);
@@ -435,7 +435,7 @@ class AIService {
       const response = result.response;
       const text = response.text();
       
-      console.log('✅ Gemini multimodal response generated in', executionTime + 'ms');
+      console.log('Gemini multimodal response generated in', executionTime + 'ms');
       
       return {
         success: true,
@@ -446,7 +446,7 @@ class AIService {
       };
       
     } catch (error) {
-      console.error('❌ Error generating Gemini multimodal response:', error.message);
+      console.error('Error generating Gemini multimodal response:', error.message);
       return this.getFallbackResponse(imagePath ? 'image' : 'text', error.message);
     }
   }
@@ -506,9 +506,9 @@ class AIService {
       // Apply template if provided
       const finalPrompt = templateText ? this.applyPromptTemplate(prompt, templateText) : prompt;
       
-      console.log('🎯 Using prompt template:', templateText ? 'Yes' : 'No');
+      console.log('Using prompt template:', templateText ? 'Yes' : 'No');
       if (templateText) {
-        console.log('📝 Template preview:', templateText.substring(0, 100) + '...');
+        console.log('Template preview:', templateText.substring(0, 100) + '...');
       }
 
       // Use the appropriate generation method based on whether we have an image
@@ -518,7 +518,7 @@ class AIService {
         return await this.generateTextResponse(finalPrompt, context);
       }
     } catch (error) {
-      console.error('❌ Error in templated response generation:', error.message);
+      console.error('Error in templated response generation:', error.message);
       return this.getFallbackResponse('text', error.message);
     }
   }
@@ -606,11 +606,11 @@ class AIService {
         try {
           const cloudResult = await this.transcribeWithGoogleCloud(audioFilePath);
           if (cloudResult.success) {
-            console.log('✅ Google Cloud transcription successful:', cloudResult.transcription);
+            console.log('Google Cloud transcription successful:', cloudResult.transcription);
             return cloudResult;
           }
         } catch (error) {
-          console.log('⚠️ Google Cloud Speech-to-Text failed:', error.message);
+          console.log('Google Cloud Speech-to-Text failed:', error.message);
         }
       }
 
@@ -620,16 +620,16 @@ class AIService {
           console.log('🔄 Trying local Whisper transcription...');
           const whisperResult = await this.transcribeWithLocalWhisper(audioFilePath);
           if (whisperResult.success) {
-            console.log('✅ Local Whisper transcription successful:', whisperResult.transcription);
+            console.log('Local Whisper transcription successful:', whisperResult.transcription);
             return whisperResult;
           }
         } catch (error) {
-          console.log('⚠️ Local Whisper failed:', error.message);
+          console.log('Local Whisper failed:', error.message);
         }
       }
 
       // If no transcription methods are available, return error
-      console.log('❌ No speech-to-text methods available');
+      console.log('No speech-to-text methods available');
       return {
         success: false,
         error: 'Speech-to-text services not available. Please enable Google Cloud Speech API or install Whisper.',
@@ -637,7 +637,7 @@ class AIService {
       };
 
     } catch (error) {
-      console.error('❌ Speech-to-text error:', error);
+      console.error('Speech-to-text error:', error);
       return {
         success: false,
         error: error.message,
@@ -655,7 +655,7 @@ class AIService {
       const audioStream = info.streams.find(stream => stream.codec_type === 'audio');
       const duration = parseFloat(info.format.duration) || 0;
       
-      console.log(`📊 Audio info: ${Math.round(duration)}s, ${audioStream?.codec_name || 'unknown'} codec`);
+      console.log(`Audio info: ${Math.round(duration)}s, ${audioStream?.codec_name || 'unknown'} codec`);
       
       return {
         duration: Math.round(duration),
@@ -664,7 +664,7 @@ class AIService {
         sampleRate: audioStream?.sample_rate || 'unknown'
       };
     } catch (error) {
-      console.log('⚠️ Could not extract audio info:', error.message);
+      console.log('Could not extract audio info:', error.message);
       return {
         duration: 0,
         codec: 'unknown',
@@ -713,7 +713,7 @@ class AIService {
           .join(' ');
       }
     } catch (error) {
-      console.log('⚠️ Default config failed, trying alternatives...', error.message);
+      console.log('Default config failed, trying alternatives...', error.message);
       lastError = error;
     }
 
@@ -735,22 +735,22 @@ class AIService {
             transcription = response.results
               .map(result => result.alternatives[0].transcript)
               .join(' ');
-            console.log(`✅ Successful transcription with ${altConfig.encoding}`);
+            console.log(`Successful transcription with ${altConfig.encoding}`);
             break;
           }
         } catch (error) {
-          console.log(`❌ ${altConfig.encoding} failed:`, error.message);
+          console.log(`${altConfig.encoding} failed:`, error.message);
           lastError = error;
         }
       }
     }
 
     if (!transcription) {
-      console.log('❌ All transcription attempts failed');
+      console.log('All transcription attempts failed');
       throw lastError || new Error('Failed to transcribe audio with all available configurations');
     }
 
-    console.log('✅ Transcription successful:', transcription);
+    console.log('Transcription successful:', transcription);
     return {
       success: true,
       transcription: transcription.trim(),
@@ -780,7 +780,7 @@ class AIService {
         fs.unlinkSync(transcriptPath);
         
         if (transcription && transcription.length > 0) {
-          console.log('✅ Local Whisper transcription successful:', transcription);
+          console.log('Local Whisper transcription successful:', transcription);
           return {
             success: true,
             transcription: transcription,
@@ -795,7 +795,7 @@ class AIService {
       }
       
     } catch (error) {
-      console.log('❌ Local Whisper transcription failed:', error.message);
+      console.log('Local Whisper transcription failed:', error.message);
       return {
         success: false,
         error: error.message,

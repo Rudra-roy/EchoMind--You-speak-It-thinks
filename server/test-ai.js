@@ -18,13 +18,13 @@ class AITestSuite {
 
   async log(message, type = 'info') {
     const timestamp = new Date().toISOString();
-    const emoji = {
-      info: 'ℹ️',
-      success: '✅',
-      error: '❌',
-      warning: '⚠️'
+    const prefix = {
+      info: 'INFO',
+      success: 'SUCCESS',
+      error: 'ERROR',
+      warning: 'WARNING'
     };
-    console.log(`${emoji[type]} [${timestamp}] ${message}`);
+    console.log(`[${prefix[type]}] [${timestamp}] ${message}`);
   }
 
   async runTests() {

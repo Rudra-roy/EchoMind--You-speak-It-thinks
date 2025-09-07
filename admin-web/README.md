@@ -4,11 +4,11 @@ A simple, clean web interface for EchoMind administration.
 
 ## Features
 
-- 🔐 **Secure Admin Login**: JWT-based authentication
-- 📊 **Dashboard Overview**: Real-time statistics and metrics
-- 👥 **User Management**: Add, delete, activate/deactivate users
-- 🔍 **Search & Filter**: Find users by name, email, or status
-- 📱 **Responsive Design**: Works on desktop, tablet, and mobile
+- **Secure Admin Login**: JWT-based authentication
+- **Dashboard Overview**: Real-time statistics and metrics
+- **User Management**: Add, delete, activate/deactivate users
+- **Search & Filter**: Find users by name, email, or status
+- **Responsive Design**: Works on desktop, tablet, and mobile
 
 ## Quick Start
 
